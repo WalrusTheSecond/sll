@@ -88,32 +88,34 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		
 	}
 
-	@Override
+    @Override
 	public void addAfter(T element, T target) {
-        Node<T> currNode = this.head;
-        int count = 0;
-    
-        if (isEmpty()){
+        if (isEmpty()) {
             throw new NoSuchElementException();
         }
-		while(count < this.size) {
-
-            if(currNode.getElement() == target){
-                Node<T> node = new Node<T>(element);
+    
+        Node<T> currNode = this.head;
+    
+        while (currNode != null) {
+            if (currNode.getElement().equals(target)) {
+                Node<T> node = new Node<>(element);
                 node.setNext(currNode.getNext());
-				currNode.setNext(node);
-				this.size++;
-				this.modCount++;
-				return;
+                currNode.setNext(node);
+    
+                // If the target was the last element, update tail
+                if (currNode == tail) {
+                    tail = node;
+                }
+    
+                this.size++;
+                this.modCount++;
+                return;
             }
-			currNode = currNode.getNext();
-            count++;
-
-			if(count == this.size){
-				throw new NoSuchElementException();
-			}
+            currNode = currNode.getNext();
         }
-	}
+    
+        throw new NoSuchElementException("Target element not found in the list.");
+    }
 
 	@Override
 	public void add(int index, T element) {
