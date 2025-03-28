@@ -226,7 +226,7 @@ public class ListTester {
 			case badList:
 				listToUse = new BadList<Integer>();
 				break;
-			case arrayList:
+			case IUSingleLinkedList:
 				listToUse = new IUSingleLinkedList<Integer>();
 				break;
 			// case singleLinkedList:
@@ -328,7 +328,7 @@ public class ListTester {
 	/**
 	 * Scenario: [A,B] -> addToFront(C) -> [C,A,B]
 	 * 
-	 * @return [C,A,B] after addToFront(C)
+	 * @return [C,A,B] after addToFront (C)
 	 */
 	private IndexedUnsortedList<Integer> AB_addFrontC_CAB() {
 		IndexedUnsortedList<Integer> list = A_addToRearB_AB();
