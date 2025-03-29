@@ -23,36 +23,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		this.size = 0;
 		this.modCount = 0;
 	}
-/* 
-	public static void main(String[] args) {
-		IUSingleLinkedList test = new IUSingleLinkedList<Integer>();
-		test.addToFront(1);
-		test.addToFront(2);
-		test.addToFront(5);
-		test.addToRear(6);
-		test.add(8);
-		test.addAfter(9, 2);
-		System.out.println(test.toTestString());
-		test.add(2,7);
-		System.out.println(test.toTestString());
-		test.removeFirst();
-		System.out.println(test.toTestString());
 
-	}
-
-	public String toTestString(){
-		Node<T> currNode = this.head;
-        int count = 0;
-		String testString = "";
-		while(count < size){
-			testString = testString + currNode.getElement().toString();
-			currNode = currNode.getNext();
-			count++;
-		}
-		return testString;
-
-	}
-*/
 	@Override
 	public void addToFront(T element) {
 		Node<T> node = new Node<T>(element);
@@ -88,34 +59,32 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		
 	}
 
-    @Override
+	@Override
 	public void addAfter(T element, T target) {
-        if (isEmpty()) {
+        Node<T> currNode = this.head;
+        int count = 0;
+    
+        if (isEmpty()){
             throw new NoSuchElementException();
         }
-    
-        Node<T> currNode = this.head;
-    
-        while (currNode != null) {
-            if (currNode.getElement().equals(target)) {
-                Node<T> node = new Node<>(element);
+		while(count < this.size) {
+
+            if(currNode.getElement() == target){
+                Node<T> node = new Node<T>(element);
                 node.setNext(currNode.getNext());
-                currNode.setNext(node);
-    
-                // If the target was the last element, update tail
-                if (currNode == tail) {
-                    tail = node;
-                }
-    
-                this.size++;
-                this.modCount++;
-                return;
+				currNode.setNext(node);
+				this.size++;
+				this.modCount++;
+				return;
             }
-            currNode = currNode.getNext();
+			currNode = currNode.getNext();
+            count++;
+
+			if(count == this.size){
+				throw new NoSuchElementException();
+			}
         }
-    
-        throw new NoSuchElementException("Target element not found in the list.");
-    }
+	}
 
 	@Override
 	public void add(int index, T element) {
@@ -128,11 +97,11 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		if (index == 0) { // Insert at the head
 			node.setNext(head);
 			head = node;
-			if (size == 0) { // If adding to an empty list, update tail as well
-				tail = node;
+			if (this.size == 0) { // If adding to an empty list, update tail as well
+				this.tail = node;
 			}
 		} else { 
-			Node<T> currNode = head;
+			Node<T> currNode = this.head;
 			for (int i = 0; i < index - 1; i++) {
 				currNode = currNode.getNext();
 			}
@@ -141,7 +110,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			currNode.setNext(node);
 	
 			if (node.getNext() == null) { // If added at the last position, update tail
-				tail = node;
+				this.tail = node;
 			}
 		}
 	
@@ -157,8 +126,8 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		T first = this.head.getElement();
 		this.head = this.head.getNext();
 
-		if (head == null) {
-			tail = null;
+		if (this.head.getElement() == null) {
+			this.tail = null;
 		}
 
 		this.size--;
