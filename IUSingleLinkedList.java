@@ -9,143 +9,112 @@ import java.util.NoSuchElementException;
  * An Iterator with working remove() method is implemented, but
  * ListIterator is unsupported.
  * 
- * @author 
+ * @author
  * 
  * @param <T> type to store
  */
 public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	private Node<T> head, tail;
 	private int size, modCount;
-	
-	/** Creates an empty list */
+
 	public IUSingleLinkedList() {
 		this.head = this.tail = null;
 		this.size = 0;
 		this.modCount = 0;
 	}
-/* 
-	public static void main(String[] args) {
-		IUSingleLinkedList test = new IUSingleLinkedList<Integer>();
-		test.addToFront(1);
-		test.addToFront(2);
-		test.addToFront(5);
-		test.addToRear(6);
-		test.add(8);
-		test.addAfter(9, 2);
-		System.out.println(test.toTestString());
-		test.add(2,7);
-		System.out.println(test.toTestString());
-		test.removeFirst();
-		System.out.println(test.toTestString());
 
-	}
-
-	public String toTestString(){
-		Node<T> currNode = this.head;
-        int count = 0;
-		String testString = "";
-		while(count < size){
-			testString = testString + currNode.getElement().toString();
-			currNode = currNode.getNext();
-			count++;
-		}
-		return testString;
-
-	}
-*/
 	@Override
 	public void addToFront(T element) {
 		Node<T> node = new Node<T>(element);
-		if(isEmpty()){    
-            this.head = this.tail = node;
-        } else {
-            node.setNext(this.head);
-            this.head = node;
-        } 
-        this.size++;
-        this.modCount++;
+		if (isEmpty()) {
+			this.head = this.tail = node;
+		} else {
+			node.setNext(this.head);
+			this.head = node;
+		}
+		this.size++;
+		this.modCount++;
 	}
 
 	@Override
 	public void addToRear(T element) {
-		if(isEmpty()){
-            Node<T> node = new Node<T>(element);
-            this.head = this.tail = node;
+		if (isEmpty()) {
+			Node<T> node = new Node<T>(element);
+			this.head = this.tail = node;
 
-        } else {
-            Node<T> node = new Node<T>(element);
-            this.tail.setNext(node);
-            this.tail = node;
-        } 
-        this.size++;
-        this.modCount++;
-		
+		} else {
+			Node<T> node = new Node<T>(element);
+			this.tail.setNext(node);
+			this.tail = node;
+		}
+		this.size++;
+		this.modCount++;
+
 	}
 
 	@Override
 	public void add(T element) {
 		addToRear(element);
-		
+
 	}
 
-    @Override
+	@Override
 	public void addAfter(T element, T target) {
-        if (isEmpty()) {
-            throw new NoSuchElementException();
-        }
-    
-        Node<T> currNode = this.head;
-    
-        while (currNode != null) {
-            if (currNode.getElement().equals(target)) {
-                Node<T> node = new Node<>(element);
-                node.setNext(currNode.getNext());
-                currNode.setNext(node);
-    
-                // If the target was the last element, update tail
-                if (currNode == tail) {
-                    tail = node;
-                }
-    
-                this.size++;
-                this.modCount++;
-                return;
-            }
-            currNode = currNode.getNext();
-        }
-    
-        throw new NoSuchElementException("Target element not found in the list.");
-    }
+		if (isEmpty()) {
+			throw new NoSuchElementException();
+		}
+
+		Node<T> currNode = this.head;
+
+		while (currNode != null) {
+			if (currNode.getElement().equals(target)) {
+				Node<T> node = new Node<>(element);
+				node.setNext(currNode.getNext());
+				currNode.setNext(node);
+
+				if (currNode == this.tail) {
+					this.tail = node;
+				}
+
+				this.size++;
+				this.modCount++;
+				return;
+			}
+			currNode = currNode.getNext();
+		}
+
+		throw new NoSuchElementException("Target element not found in the list.");
+	}
 
 	@Override
 	public void add(int index, T element) {
-		if (index < 0 || index > size) {
+		if (index < 0 || index > this.size) {
 			throw new IndexOutOfBoundsException();
 		}
-	
+
 		Node<T> node = new Node<>(element);
-	
-		if (index == 0) { // Insert at the head
-			node.setNext(head);
-			head = node;
-			if (size == 0) { // If adding to an empty list, update tail as well
-				tail = node;
+
+		if (index == 0) {
+			node.setNext(this.head);
+			this.head = node;
+			if (this.size == 0) {
+				this.tail = node;
 			}
-		} else { 
-			Node<T> currNode = head;
+		} else {
+			Node<T> currNode = this.head;
 			for (int i = 0; i < index - 1; i++) {
 				currNode = currNode.getNext();
 			}
-			
+
 			node.setNext(currNode.getNext());
 			currNode.setNext(node);
-	
-			if (node.getNext() == null) { // If added at the last position, update tail
-				tail = node;
+
+			if (node.getNext() == null) {
+				this.tail = node;
 			}
 		}
-	
-		size++;
+
+		this.size++;
 		modCount++;
 	}
 
@@ -157,8 +126,8 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		T first = this.head.getElement();
 		this.head = this.head.getNext();
 
-		if (head == null) {
-			tail = null;
+		if (this.head == null) {
+			this.tail = null;
 		}
 
 		this.size--;
@@ -167,38 +136,39 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	}
 
 	@Override
-public T removeLast() {
-    if (isEmpty()) {
-        throw new NoSuchElementException();
-    }
+	public T removeLast() {
+		if (isEmpty()) {
+			throw new NoSuchElementException();
+		}
 
-    if (size == 1) { // If there's only one element
-        return removeFirst();
-    }
+		if (this.size == 1) {
+			return removeFirst();
+		}
 
-    Node<T> curr = head;
-    while (curr.getNext() != tail) {
-        curr = curr.getNext();
-    }
+		Node<T> curr = this.head;
+		while (curr.getNext() != this.tail) {
+			curr = curr.getNext();
+		}
 
-    T last = tail.getElement();
-    tail = curr;
-    tail.setNext(null);
-    
-    size--;
-    modCount++;
-    return last;
-}
+		T last = this.tail.getElement();
+		this.tail = curr;
+		this.tail.setNext(null);
+
+		this.size--;
+		modCount++;
+		return last;
+	}
+
 	@Override
 	public T remove(T element) {
 		if (isEmpty()) {
 			throw new NoSuchElementException();
 		}
-		
+
 		boolean found = false;
 		Node<T> previous = null;
-		Node<T> current = head;
-		
+		Node<T> current = this.head;
+
 		while (current != null && !found) {
 			if (element.equals(current.getElement())) {
 				found = true;
@@ -207,100 +177,100 @@ public T removeLast() {
 				current = current.getNext();
 			}
 		}
-		
+
 		if (!found) {
 			throw new NoSuchElementException();
 		}
-		
-		if (size() == 1) { //only node
-			head = tail = null;
-		} else if (current == head) { //first node
-			head = current.getNext();
-		} else if (current == tail) { //last node
-			tail = previous;
-			tail.setNext(null);
-		} else { //somewhere in the middle
+
+		if (this.size() == 1) {
+			this.head = this.tail = null;
+		} else if (current == this.head) {
+			this.head = current.getNext();
+		} else if (current == this.tail) {
+			this.tail = previous;
+			this.tail.setNext(null);
+		} else {
 			previous.setNext(current.getNext());
 		}
-		
-		size--;
+
+		this.size--;
 		modCount++;
-		
+
 		return current.getElement();
 	}
 
 	@Override
 	public T remove(int index) {
-		if(index < 0 || index >= this.size){
+		if (index < 0 || index >= this.size) {
 			throw new IndexOutOfBoundsException();
 		}
-		T element = head.getElement();
-		if(index == 0){
+		T element = this.head.getElement();
+		if (index == 0) {
 			removeFirst();
-		}else{
+		} else {
 			Node<T> currentNode = this.head;
-			for(int i = 0; i < index - 1; i++){
+			for (int i = 0; i < index - 1; i++) {
 				currentNode = currentNode.getNext();
 			}
 			Node<T> toRemove = currentNode.getNext();
-            element = toRemove.getElement();
-            currentNode.setNext(toRemove.getNext());
-            if (toRemove == tail) {
-                tail = currentNode;
-            }
-            size--;
-            modCount++;
-        }
-        return element;
+			element = toRemove.getElement();
+			currentNode.setNext(toRemove.getNext());
+			if (toRemove == this.tail) {
+				this.tail = currentNode;
+			}
+			this.size--;
+			modCount++;
+		}
+		return element;
 	}
 
 	@Override
 	public void set(int index, T element) {
-		if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
-        }
-        Node<T> current = head;
-        for (int i = 0; i < index; i++) {
-            current = current.getNext();
-        }
-        current.setElement(element);
+		if (index < 0 || index >= this.size) {
+			throw new IndexOutOfBoundsException();
+		}
+		Node<T> current = this.head;
+		for (int i = 0; i < index; i++) {
+			current = current.getNext();
+		}
+		current.setElement(element);
 		this.modCount++;
 	}
 
 	@Override
 	public T get(int index) {
-		if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
-        }
-        Node<T> current = head;
-        for (int i = 0; i < index; i++) {
-            current = current.getNext();
-        }
-        return current.getElement();
+		if (index < 0 || index >= this.size) {
+			throw new IndexOutOfBoundsException();
+		}
+		Node<T> current = this.head;
+		for (int i = 0; i < index; i++) {
+			current = current.getNext();
+		}
+		return current.getElement();
 	}
 
 	@Override
 	public int indexOf(T element) {
-	Node<T> current = head;
-    int index = 0;
-    
-    while (current != null) {
-        if (current.getElement().equals(element)) {
-            return index; // Found the element, return the index
-        }
-        current = current.getNext();
-        index++;
-    }
-    
-    return -1; // Element not found
+		Node<T> current = this.head;
+		int index = 0;
+
+		while (current != null) {
+			if (current.getElement().equals(element)) {
+				return index;
+			}
+			current = current.getNext();
+			index++;
+		}
+
+		return -1;
 	}
 
 	@Override
 	public T first() {
-	    if (isEmpty()) {
+		if (isEmpty()) {
 			throw new NoSuchElementException("List is empty.");
 		}
-		return head.getElement();
+		return this.head.getElement();
 	}
 
 	@Override
@@ -308,61 +278,60 @@ public T removeLast() {
 		if (isEmpty()) {
 			throw new NoSuchElementException("List is empty.");
 		}
-		return tail.getElement();
+		return this.tail.getElement();
 	}
 
 	@Override
 	public boolean contains(T target) {
-		Node<T> current = head;
-    
+		Node<T> current = this.head;
+
 		while (current != null) {
 			if (current.getElement().equals(target)) {
-				return true; // Found the element
+				return true;
 			}
 			current = current.getNext();
 		}
-		
-		return false; // Element not found
+
+		return false;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		if(size == 0) {
-            return true;
-        }
+		if (this.size == 0) {
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public int size() {
-		return size;
+		return this.size;
 	}
 
 	@Override
 	public String toString() {
 		if (isEmpty()) {
-			return "[]"; // Return empty brackets if the list is empty
+			return "[]";
 		}
-	
+
 		String result = "[";
-		Node<T> current = head;
-	
+		Node<T> current = this.head;
+
 		while (current != null) {
-			result += current.getElement(); // Append element
+			result += current.getElement();
 			if (current.getNext() != null) {
-				result += ", "; // Add a comma separator if there's a next element
+				result += ", ";
 			}
 			current = current.getNext();
 		}
-	
+
 		result += "]";
 		return result;
 	}
 
-
 	@Override
 	public Iterator<T> iterator() {
-		return new SllIterator();
+		return new IUSllIterator();
 	}
 
 	@Override
@@ -376,46 +345,51 @@ public T removeLast() {
 	}
 
 	/** Iterator for IUSingleLinkedList */
-	private class SllIterator implements Iterator<T> {
-        private Node<T> nextNode;
-        private Node<T> lastReturned;
-        private int iterModCount;
+	private class IUSllIterator implements Iterator<T> {
+		private Node<T> nextNode;
+		private Node<T> lastReturned;
+		private int expectedModCount;
 
-        public SllIterator() {
-            nextNode = head;
-            lastReturned = null;
-            iterModCount = modCount;
-        }
+		public IUSllIterator() {
+			nextNode = head;
+			lastReturned = null;
+			expectedModCount = modCount;
+		}
 
-        @Override
-        public boolean hasNext() {
-            return nextNode != null;
-        }
+		@Override
+		public boolean hasNext() {
+			if (modCount != expectedModCount) {
+				throw new ConcurrentModificationException();
+			}
+			return nextNode != null;
+		}
 
-        @Override
-        public T next() {
-            if (modCount != iterModCount) {
-                throw new ConcurrentModificationException();
-            }
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            lastReturned = nextNode;
-            nextNode = nextNode.getNext();
-            return lastReturned.getElement();
-        }
+		@Override
+		public T next() {
+			if (modCount != expectedModCount) {
+				throw new ConcurrentModificationException();
+			}
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			lastReturned = nextNode;
+			nextNode = nextNode.getNext();
+			return lastReturned.getElement();
+		}
 
-        @Override
-        public void remove() {
-            if (modCount != iterModCount) {
-                throw new ConcurrentModificationException();
-            }
-            if (lastReturned == null) {
-                throw new IllegalStateException();
-            }
-            IUSingleLinkedList.this.remove(lastReturned.getElement());
-            lastReturned = null;
-            iterModCount++;
-        }
+		@Override
+		public void remove() {
+			if (modCount != expectedModCount) {
+				throw new ConcurrentModificationException();
+			}
+			if (lastReturned == null) {
+				throw new IllegalStateException();
+			}
+			IUSingleLinkedList.this.remove(lastReturned.getElement());
+			lastReturned = null;
+			expectedModCount++;
+
+		}
+
 	}
 }
